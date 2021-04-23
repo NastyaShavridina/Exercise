@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,8 +11,27 @@ namespace ConsoleApp9
 {
     class Program
     {
+        delegate string Mydelegate();
+
         static void Main(string[] args)
         {
+            List<string> list = new List<string>();
+
+            DataRead dataRead = new DataRead();
+
+            DataOperate dataOperate = new DataOperate();
+
+            Mydelegate mydelegate = new Mydelegate(dataRead.ReadSubjectName);
+
+            mydelegate += dataRead.ReadStudentFirstName;
+
+            mydelegate += dataRead.ReadStudentLastName;
+
+            foreach (Mydelegate item in mydelegate.GetInvocationList())
+            {
+                list.Add(item());
+            }
+
             var builder = new ConfigurationBuilder();
 
             builder.SetBasePath(Directory.GetCurrentDirectory());
@@ -22,7 +42,6 @@ namespace ConsoleApp9
 
             string connectionString = config.GetConnectionString("DefaultConnection");
 
-
             DbContextOptionsBuilder dbContextOptionsBuilder = new DbContextOptionsBuilder();
             var optionsBuilder = new DbContextOptionsBuilder<ApplicationContext>();
 
@@ -30,12 +49,9 @@ namespace ConsoleApp9
              .UseSqlServer(connectionString)
              .Options;
 
-            using (ApplicationContext db = new ApplicationContext(options))
-            {
-                
-            }
             Console.Read();
 
+            dataOperate.Operation(options, list[0], list[1], list[2]);
 
         }
     }

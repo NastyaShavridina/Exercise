@@ -6,8 +6,9 @@ using System.Text;
 namespace ConsoleApp9
 {
    public class Student
-    {  [Key]
-       public string StudentId { get; set;}
+    { 
+       [Key]
+       public string StudentId { get; set; }
 
        public string FirstName { get; set; }
 
